@@ -1,4 +1,3 @@
-# VPC DarMate
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
@@ -6,13 +5,11 @@ resource "aws_vpc" "main" {
   tags = { Name = "${var.project_name}-vpc" }
 }
 
-# Internet Gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags   = { Name = "${var.project_name}-igw" }
 }
 
-# 2 Sous-reseaux Publics (AZ-a et AZ-b)
 resource "aws_subnet" "public" {
   count                   = 2
   vpc_id                  = aws_vpc.main.id
@@ -22,7 +19,6 @@ resource "aws_subnet" "public" {
   tags                    = { Name = "${var.project_name}-public-az${count.index + 1}" }
 }
 
-# 2 Sous-reseaux Prives Applicatifs (AZ-a et AZ-b)
 resource "aws_subnet" "app_private" {
   count             = 2
   vpc_id            = aws_vpc.main.id
@@ -31,7 +27,6 @@ resource "aws_subnet" "app_private" {
   tags              = { Name = "${var.project_name}-app-private-az${count.index + 1}" }
 }
 
-# 2 Sous-reseaux Prives Donnees (AZ-a et AZ-b)
 resource "aws_subnet" "db_private" {
   count             = 2
   vpc_id            = aws_vpc.main.id

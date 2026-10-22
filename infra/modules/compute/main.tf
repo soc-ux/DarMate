@@ -7,7 +7,6 @@ data "aws_ami" "amazon_linux_2023" {
   }
 }
 
-# ALB Public Multi-AZ
 resource "aws_lb" "main" {
   name               = "${var.project_name}-alb"
   internal           = false
@@ -46,7 +45,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# Premiere instance EC2 (Sous-reseau prive, sans IP publique)
+# Premiere instance EC2 
 resource "aws_instance" "app_first" {
   ami           = data.aws_ami.amazon_linux_2023.id
   instance_type = "t3.micro"
@@ -54,7 +53,7 @@ resource "aws_instance" "app_first" {
   subnet_id              = var.app_private_subnet_id
   vpc_security_group_ids = [var.app_security_group_id]
 
-  # Role IAM impose par AWS Academy
+  # Role IAM
   iam_instance_profile = "LabInstanceProfile"
 
   metadata_options {
@@ -76,7 +75,7 @@ resource "aws_instance" "app_first" {
               <html>
               <head>
                 <meta charset="utf-8">
-                <title>DarMate - Livrable 3</title>
+                <title>DarMate </title>
                 <style>
                   body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; }
                   .card { background: #1e293b; border-radius: 12px; padding: 30px; max-width: 650px; margin: auto; border: 1px solid #334155; }
