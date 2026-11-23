@@ -1,7 +1,7 @@
-# 1. sg-alb : Inbound 80 depuis Internet
+# 1. sg-alb : Inbound 80 from Internet
 resource "aws_security_group" "alb" {
   name        = "${var.project_name}-sg-alb"
-  description = "Port 80 ouvert aux internautes"
+  description = "Port 80 open to Internet"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -25,7 +25,7 @@ resource "aws_security_group" "alb" {
 # 2. sg-front
 resource "aws_security_group" "front" {
   name        = "${var.project_name}-sg-front"
-  description = "Frontend accessible depuis ALB uniquement"
+  description = "Frontend accessible from ALB only"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -46,18 +46,26 @@ resource "aws_security_group" "front" {
   tags = { Name = "${var.project_name}-sg-front" }
 }
 
-# 3. sg-app : Inbound depuis sg-front uniquement
+# sg-app
 resource "aws_security_group" "app" {
   name        = "${var.project_name}-sg-app"
-  description = "Backend accessible depuis le Frontend uniquement"
+  description = "Backend accessible from ALB and Frontend"
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "API calls from Frontend only"
+    description     = "API calls from ALB (path-based routing /api/*)"
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [aws_security_group.front.id] 
+    security_groups = [aws_security_group.alb.id]
+  }
+
+  ingress {
+    description     = "API calls from Frontend instances (server-side)"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.front.id]
   }
 
   egress {
@@ -70,10 +78,10 @@ resource "aws_security_group" "app" {
   tags = { Name = "${var.project_name}-sg-app" }
 }
 
-# 4. sg-db : Inbound 3306 depuis sg-app uniquement
+# sg-db
 resource "aws_security_group" "db" {
   name        = "${var.project_name}-sg-db"
-  description = "MySQL autorise depuis sg-app uniquement"
+  description = "MySQL allowed from sg-app only"
   vpc_id      = var.vpc_id
 
   ingress {
