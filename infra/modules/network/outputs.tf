@@ -17,3 +17,8 @@ output "db_private_subnet_ids" {
 output "nat_gateway_ip" {
   value = aws_eip.nat.public_ip
 }
+
+output "s3_endpoint_id" {
+  description = "ID du VPC Gateway Endpoint S3 (trafic S3 reste dans AWS, sans NAT)"
+  value       = aws_vpc_endpoint.s3.id
+}

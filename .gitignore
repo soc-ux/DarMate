@@ -1,16 +1,17 @@
-# Terraform
 .terraform/
 *.tfstate
 *.tfstate.backup
 *.tfvars
 crash.log
+*.tfstate
+*.tfstate.*
 
-# Fichiers sensibles et cles
 *.pem
 *.key
 credentials
 .env
 
-# OS
 Thumbs.db
 .DS_Store
+
+
